@@ -7,3 +7,7 @@ object GUIManager {
     val listeningGUIs = mutableMapOf<Inventory, GUI>()
 
 }
+
+fun thing() {
+
+}

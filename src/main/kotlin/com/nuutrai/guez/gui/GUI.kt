@@ -30,8 +30,12 @@ class GUI {
     fun slot(slotIndex: Int, init: Slot.() -> Unit) {
         val slot = Slot()
         slot.init()
+        setSlot(slotIndex, slot)
+        return
+    }
+
+    internal fun setSlot(slotIndex: Int, slot: Slot) {
         slotMap[slotIndex] = slot
-        return 
     }
 
     fun toBukkit() {
@@ -69,6 +73,10 @@ class Slot {
         action = consumer
     }
 
+}
+
+fun buildGUI(): GUIBuilder {
+    return GUIBuilder()
 }
 
 fun createGUI(init: GUI.() -> Unit): Inventory {
