@@ -56,6 +56,16 @@ class GUI() {
         return
     }
 
+    fun slot(slotIndices: List<Int>, slot: Slot.() -> Unit) {
+        slotIndices.forEach { i ->
+            slot(i, slot)
+        }
+    }
+
+    fun slot(slotIndices: IntRange, slot: Slot.() -> Unit) {
+        slot(slotIndices.toList(), slot)
+    }
+
     private fun setSlot(slotIndex: Int, slot: Slot) {
         slotMap[slotIndex] = slot
     }
@@ -103,6 +113,17 @@ class GUI() {
         fun size(size: Int) = apply { this.size = size }
         fun lock(lock: Boolean) = apply { this.lock = lock }
         fun slot(slotIndex: Int, slot: Slot) = apply { this.slotMap[slotIndex] = slot }
+
+        fun slot(slotIndices: List<Int>, slot: Slot) {
+            slotIndices.forEach { i ->
+                slot(i, slot)
+            }
+        }
+
+        fun slot(slotIndices: IntRange, slot: Slot) {
+            slot(slotIndices.toList(), slot)
+        }
+
 
         fun build(): GUI {
             return GUI(this).also { it.toBukkit() }
