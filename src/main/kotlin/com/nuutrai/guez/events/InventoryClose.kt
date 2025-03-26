@@ -9,6 +9,6 @@ class InventoryClose : Listener {
     @EventHandler
     fun onInventoryClose(event: InventoryCloseEvent) {
         val gui = GUIManager.listeningGUIs[event.inventory] ?: return
-        GUIManager.listeningGUIs.remove(event.inventory)
+        if (!gui.isPersistent) GUIManager.listeningGUIs.remove(event.inventory)
     }
 }

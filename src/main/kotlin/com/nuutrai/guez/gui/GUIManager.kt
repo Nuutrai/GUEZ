@@ -4,10 +4,9 @@ import org.bukkit.inventory.Inventory
 
 object GUIManager {
 
-    val listeningGUIs = mutableMapOf<Inventory, GUI>()
-
-}
-
-fun thing() {
+    internal val listeningGUIs = mutableMapOf<Inventory, GUI>()
+    fun getGUIs(): MutableMap<Inventory, GUI> {
+        return listeningGUIs.toMutableMap()
+    }
 
 }

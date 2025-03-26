@@ -9,19 +9,28 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.lang.Math.clamp
 import java.util.function.Consumer
+import kotlin.math.round
 
-class GUI {
-    
+class GUI() {
+
+    private constructor(builder: GUIBuilder) : this() {
+        name = builder.name
+        size = builder.size
+        lock = builder.lock
+        slotMap = builder.slotMap
+    }
+
     var name = ""
     var size = 27
         set(value) {
             var assert = value
-            assert = (assert / 9) * 9
+            assert = (round(assert.toDouble() / 9) * 9).toInt()
             if (assert < 9) assert = 9
             if (assert > 54) assert = 54
             field = assert
         }
     var lock = true
+    var isPersistent = false
     var inventory: Inventory? = null
         private set
     var slotMap = mutableMapOf<Int, Slot>()
@@ -34,11 +43,11 @@ class GUI {
         return
     }
 
-    internal fun setSlot(slotIndex: Int, slot: Slot) {
+    private fun setSlot(slotIndex: Int, slot: Slot) {
         slotMap[slotIndex] = slot
     }
 
-    fun toBukkit() {
+    fun toBukkit(): Inventory {
         val inventory = Bukkit.createInventory(null, size, Component.text(name))
         for (i in 0..<inventory.size) {
             val slot = slotMap[i]
@@ -47,7 +56,7 @@ class GUI {
             inventory.setItem(i, item)
         }
         GUIManager.listeningGUIs[inventory] = this
-        this.inventory = inventory
+        return inventory.also { this.inventory = inventory }
     }
 
     fun update(newGUI: GUI) {
@@ -62,9 +71,40 @@ class GUI {
             inventory!!.setItem(i, slotMap[i]?.item ?: ItemStack.of(Material.AIR))
         }
     }
+
+    class GUIBuilder {
+        internal var name: String = ""
+        internal var size: Int = 27
+            set(value) {
+                var assert = value
+                assert = (round(assert.toDouble() / 9) * 9).toInt()
+                if (assert < 9) assert = 9
+                if (assert > 54) assert = 54
+                field = assert
+            }
+        internal var lock = true
+        internal var persistent = false
+        internal var slotMap = mutableMapOf<Int, Slot>()
+
+        fun name(name: String) = apply { this.name = name }
+        fun size(size: Int) = apply { this.size = size }
+        fun lock(lock: Boolean) = apply { this.lock = lock }
+        fun slot(slotIndex: Int, slot: Slot) = apply { this.slotMap[slotIndex] = slot }
+
+        fun build(): GUI {
+            return GUI(this).also { it.toBukkit() }
+        }
+
+    }
+
 }
 
-class Slot {
+class Slot() {
+
+    private constructor(builder: SlotBuilder) : this() {
+        item = builder.item
+        action = builder.action
+    }
 
     var item: ItemStack = ItemStack.of(Material.AIR)
     var action: Consumer<InventoryClickEvent>? = null
@@ -73,10 +113,23 @@ class Slot {
         action = consumer
     }
 
+    class SlotBuilder {
+        internal var item: ItemStack = ItemStack.of(Material.AIR)
+        internal var action: Consumer<InventoryClickEvent>? = null
+
+        fun item(item: ItemStack) = apply { this.item = item }
+        fun action(action: Consumer<InventoryClickEvent>) = apply { this.action = action }
+        fun build() = Slot(this)
+    }
+
 }
 
-fun buildGUI(): GUIBuilder {
-    return GUIBuilder()
+fun buildGUI(): GUI.GUIBuilder {
+    return GUI.GUIBuilder()
+}
+
+fun buildSlot(): Slot.SlotBuilder {
+    return Slot.SlotBuilder()
 }
 
 fun createGUI(init: GUI.() -> Unit): Inventory {
