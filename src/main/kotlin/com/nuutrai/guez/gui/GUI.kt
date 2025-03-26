@@ -3,14 +3,27 @@ package com.nuutrai.guez.gui
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.event.EventPriority
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import java.lang.Math.clamp
 import java.util.function.Consumer
 import kotlin.math.round
 
+/**
+ * The GUI class
+ *
+ * To ensure that the size is set correctly, the size is set to the closest multiple of 9, and is clamped from 9 to 54
+ *
+ * When a GUI is not persistent (defaults to not persistent), the GUI object is deleted when the player closes the inventory.
+ * If you would like the GUI to stay in memory (E.g. if you're reüsing the same inventory object in your code) set this to true.
+ *
+ * @param name The name of the inventory shown to the player
+ * @param size The size of the inventory
+ * @param lock The locked (ability for players to move items) status (defaults to true)
+ * @param isPersistent Determines whether the inventory object will be deleted (defaults to false)
+ * @property slotMap A map of slot indices to [Slot] objects, this will be used to populate the inventory
+ */
 class GUI() {
 
     private constructor(builder: GUIBuilder) : this() {
@@ -99,6 +112,17 @@ class GUI() {
 
 }
 
+/**
+ * The Slot class
+ *
+ * The Slot class contains information as to what should go or happen to a slot.
+ *
+ * An [InventoryClickEvent] is forwarded to the action consumer, therefore you may use the event object as you wish.
+ * This event is called with [EventPriority.LOWEST], meaning this will likely be the first instance of the event being handled
+ *
+ * @param item The [ItemStack] corresponding to the slot shown to the player
+ * @param action The action taken when the slot is clicked by the player
+ */
 class Slot() {
 
     private constructor(builder: SlotBuilder) : this() {
@@ -132,6 +156,10 @@ fun buildSlot(): Slot.SlotBuilder {
     return Slot.SlotBuilder()
 }
 
+/**
+ * With use of a lambda argument, [createGUI] allows for easy creation of a GUI (which is converted to an [Inventory] object)
+ * When in the lambda, assuming you're using Kotlin
+ */
 fun createGUI(init: GUI.() -> Unit): Inventory {
     val gui = GUI()
     gui.init()
