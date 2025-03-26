@@ -15,11 +15,11 @@ object GUEZ {
         return Slot.SlotBuilder()
     }
 
-    fun createGUI(init: GUI.() -> Unit): Inventory {
+    fun createGUI(init: GUI.() -> Unit): GUI {
         val gui = GUI()
         gui.init()
         gui.toBukkit()
-        return gui.inventory!!
+        return gui
     }
 
     fun editGUI(inventory: Inventory, init: GUI.() -> Unit) {

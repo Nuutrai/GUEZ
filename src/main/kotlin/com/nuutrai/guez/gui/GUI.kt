@@ -181,11 +181,11 @@ fun buildSlot(): Slot.SlotBuilder {
  * With use of a lambda argument, [createGUI] allows for easy creation of a GUI (which is converted to an [Inventory] object)
  * When in the lambda, assuming you're using Kotlin
  */
-fun createGUI(init: GUI.() -> Unit): Inventory {
+fun createGUI(init: GUI.() -> Unit): GUI {
     val gui = GUI()
     gui.init()
     gui.toBukkit()
-    return gui.inventory!!
+    return gui
 }
 
 fun editGUI(inventory: Inventory, init: GUI.() -> Unit) {
