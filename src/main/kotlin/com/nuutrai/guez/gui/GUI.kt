@@ -28,7 +28,7 @@ import kotlin.math.round
  */
 class GUI() {
 
-    private constructor(builder: GUIBuilder) : this() {
+    constructor(builder: GUIBuilder) : this() {
         name = builder.name
         size = builder.size
         lock = builder.lock
@@ -132,16 +132,11 @@ class GUI() {
         fun close(consumer: Consumer<InventoryCloseEvent>) = apply { close = consumer }
         fun slot(slotIndex: Int, slot: Slot) = apply { this.slotMap[slotIndex] = slot }
 
-        fun slot(slotIndices: List<Int>, slot: Slot) {
+        fun slot(slotIndices: List<Int>, slot: Slot) = apply {
             slotIndices.forEach { i ->
                 slot(i, slot)
             }
         }
-
-        fun slot(slotIndices: IntRange, slot: Slot) {
-            slot(slotIndices.toList(), slot)
-        }
-
 
         fun build(): GUI {
             return GUI(this).also { it.toBukkit() }
@@ -214,4 +209,8 @@ fun editGUI(gui: GUI, init: GUI.() -> Unit) {
     val newGUI = gui
     newGUI.init()
     gui.update(newGUI)
+}
+
+fun editGUI(gui: GUI, newGUI: GUI.GUIBuilder) {
+    gui.update(GUI(newGUI))
 }
