@@ -11,7 +11,7 @@ class InventoryClick : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onInventoryClickEvent(event: InventoryClickEvent) {
 
-        val gui = GUIManager.listeningGUIs[event.clickedInventory] ?: return
+        val gui = GUIManager.listeningGUIs[event.inventory] ?: return
         if (gui.lock) event.isCancelled = true
         ((gui.slotMap[event.slot] ?: return).action ?: return).accept(event)
 
