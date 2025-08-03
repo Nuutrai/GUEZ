@@ -2,6 +2,9 @@
 
 GU<i>EZ</i> makes it easy to create GUIs for Minecraft in both Kotlin and Java
 
+To implement GU<i>EZ</i>, add Jitpack to your repositories \
+Then add the dependency `com.nuutrai:guez:1.0.2`
+
 Here's an example of how to use GU<i>EZ</i> in Kotlin:
 ```kt
 fun awesomeGUI() {
