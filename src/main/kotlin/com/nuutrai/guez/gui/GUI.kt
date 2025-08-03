@@ -5,6 +5,8 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.EventPriority
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.function.Consumer
@@ -31,6 +33,8 @@ class GUI() {
         size = builder.size
         lock = builder.lock
         slotMap = builder.slotMap
+        open = builder.open
+        close = builder.close
     }
 
     var name = ""
@@ -43,11 +47,21 @@ class GUI() {
             field = assert
         }
     var lock = true
+    var open: Consumer<InventoryOpenEvent>? = null
+    var close: Consumer<InventoryCloseEvent>? = null
     var isPersistent = false
     var inventory: Inventory? = null
         private set
     var slotMap = mutableMapOf<Int, Slot>()
         private set
+
+    fun open(consumer: Consumer<InventoryOpenEvent>) {
+        open = consumer
+    }
+
+    fun close(consumer: Consumer<InventoryCloseEvent>) {
+        close = consumer
+    }
 
     fun slot(slotIndex: Int, init: Slot.() -> Unit) {
         val slot = Slot()
@@ -107,11 +121,15 @@ class GUI() {
             }
         internal var lock = true
         internal var persistent = false
+        internal var open: Consumer<InventoryOpenEvent>? = null
+        internal var close: Consumer<InventoryCloseEvent>? = null
         internal var slotMap = mutableMapOf<Int, Slot>()
 
         fun name(name: String) = apply { this.name = name }
         fun size(size: Int) = apply { this.size = size }
         fun lock(lock: Boolean) = apply { this.lock = lock }
+        fun open(consumer: Consumer<InventoryOpenEvent>) = apply { open = consumer }
+        fun close(consumer: Consumer<InventoryCloseEvent>) = apply { close = consumer }
         fun slot(slotIndex: Int, slot: Slot) = apply { this.slotMap[slotIndex] = slot }
 
         fun slot(slotIndices: List<Int>, slot: Slot) {
